@@ -65,8 +65,6 @@ namespace MirrorTanks
 
         }
 
-        //[Server] without the server its not gonna get ccalled on the server so the sync wont work but if i remove the server its working why?
-        //maybe beacuse the check in the update that its called in the server anyway
         [Server]
         void RevivingOperation()
         {
@@ -100,12 +98,12 @@ namespace MirrorTanks
                 _decayTimer = _reviveData.TimeToDie;
             }
         }
-        public void addAllyToList(NetworkingPlayer player)//if we gonna use normal lists
-        {
-            if (!AllyPlayers.Find(x => x == player))
-                AllyPlayers.Add(player);
+        //public void addAllyToList(NetworkingPlayer player)//if we gonna use normal lists
+        //{
+        //    if (!AllyPlayers.Find(x => x == player))
+        //        AllyPlayers.Add(player);
             
-        }
+        //}
         [Server]
         public void ServerAddAllyFromList(NetworkingPlayer player)
         {
@@ -123,19 +121,17 @@ namespace MirrorTanks
             {
                 if(other.gameObject!=_ownerGameObject&& other.gameObject.layer == LayerMask.NameToLayer(_ownerTeamData.FriendlyTeamLayer)&&other.gameObject.GetComponent<NetworkingPlayer>().IsDead==false)
                 {
-                        //addAllyToList(other.gameObject.GetComponent<NetworkingPlayer>());
-                        
+                      
                         ServerAddAllyFromList(other.gameObject.GetComponent<NetworkingPlayer>());
-                   
 
                 }
             }
         }
         
-        public void removeAllyFromList(NetworkingPlayer player)// if we gonna use normal lists
-        {
-            AllyPlayers.RemoveAll(x=>x==player);
-        }
+        //public void removeAllyFromList(NetworkingPlayer player)// if we gonna use normal lists
+        //{
+        //    AllyPlayers.RemoveAll(x=>x==player);
+        //}
 
         [Server]
         public void ServerRemoveAllyFromList(NetworkingPlayer player)
@@ -155,7 +151,6 @@ namespace MirrorTanks
             {
                 if (other.gameObject != _ownerGameObject && other.gameObject.layer == LayerMask.NameToLayer(_ownerTeamData.FriendlyTeamLayer))
                 {
-                    //removeAllyFromList(other.gameObject.GetComponent<NetworkingPlayer>());
                     ServerRemoveAllyFromList(other.gameObject.GetComponent<NetworkingPlayer>());
                 }
             }
@@ -171,9 +166,8 @@ namespace MirrorTanks
 
             if (_timeRemaningToRevive <= 0)
             {
-                if (NetworkingManager.Instance.IsServer)//if i dont use this it wont cause a problem idk why
-                    Revive();// why not checking is allowed
-                             // as this is only called on the server but Decay isn't
+                if (NetworkingManager.Instance.IsServer)
+                    Revive();
             }
             float minutes = Mathf.FloorToInt(_timeRemaningToRevive / 60);
             float seconds = Mathf.FloorToInt(_timeRemaningToRevive % 60);
@@ -185,12 +179,8 @@ namespace MirrorTanks
             _decayTimer = newVal;
             if (_decayTimer <= 0)
             {
-                if (NetworkingManager.Instance.IsServer)//why do i use check here but in Revive function i dont.
-                    Decay();                               //the error is its called when server is not active
-                                                              //but this is triggered on by the changes in the updatewhich has a check to only be called in the server?
-                                                                 //[1]MaybeBeacuse the hook function is called in clients too that a reason too
-                                                                    //but again why revive allows it and decay doesnt
-                                                                        //maybe[1] is the logical and correct answer and revive() is the abnormal behaviour and i must do the check to it anyway
+                if (NetworkingManager.Instance.IsServer)
+                    Decay();                               
                 _counterText.text = "Died";
             }
             else
@@ -219,7 +209,6 @@ namespace MirrorTanks
         {
             if (!NetworkingManager.Instance.IsHost)
             {
-                //AllyPlayers.Clear();
                 transform.gameObject.SetActive(false);
             }
         }
